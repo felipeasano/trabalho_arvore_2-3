@@ -12,6 +12,8 @@ typedef struct no{
     // int registro[ORDEM];
     int chave_esq;
     int chave_dir;
+    int reg_esq;
+    int reg_dir;
     int n;
     int filho_esq;
     int filho_meio;

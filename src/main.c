@@ -1,5 +1,6 @@
 #include "view.h"
 
+
 void imprime_cab(ARQ_BIN* b){
     printf("raiz:  %d\n", b->cab.raiz);
     printf("topo:  %d\n", b->cab.topo);
@@ -7,7 +8,6 @@ void imprime_cab(ARQ_BIN* b){
 }
 
 int main(){
-    
     ARQ_BIN arq_indices;
     ARQ_BIN arq_dados;
 

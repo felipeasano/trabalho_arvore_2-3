@@ -73,4 +73,9 @@ void imprime_livre_dados(ARQ_BIN* arq);
 // Pós-condição: O produto é removido dos arquivos de índices e dados
 void GerenciaRemocao(ARQ_BIN *arq_index, ARQ_BIN *arq_dados, int codigo);
 
+// imprime os dados de um no da arvore23
+// pre-condicao: arvore existente
+// pos-condicao: nenhum
+void imprime_no(NO* no);
+
 #endif

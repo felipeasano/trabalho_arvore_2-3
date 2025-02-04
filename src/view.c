@@ -295,5 +295,22 @@ void GerenciaRemocao(ARQ_BIN *arq_index, ARQ_BIN *arq_dados, int codigo){
     printf("Codigo [%d] excluido com sucesso\n", codigo);
 }
 
+// imprime os dados de um no da arvore23
+// pre-condicao: arvore existente
+// pos-condicao: nenhum
+void imprime_no(NO* no){
+    if(no->n == 1){
+        printf("n = %d\n", no->n);
+        printf("[ %d |   ]\n", no->chave_esq);
+        printf("[ %d |   ]\n", no->reg_esq);
+        printf("[ %d | %d |   ]\n", no->filho_esq, no->filho_meio);
+    }else{
+        printf("n = %d\n", no->n);
+        printf("[ %d | %d ]\n", no->chave_esq, no->chave_dir);
+        printf("[ %d | %d ]\n", no->reg_esq, no->reg_dir);
+        printf("[ %d | %d | %d ]\n", no->filho_esq, no->filho_meio, no->filho_dir);
+    }
+}
+
 
 #endif
