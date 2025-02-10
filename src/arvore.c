@@ -292,9 +292,6 @@ int insere(ARQ_BIN* arq_index, int pos, int chave, int reg){
     int chave_promovida;
     int reg_promovido;
     int aux = insere_aux(arq_index, arq_index->cab.raiz, chave, reg, &chave_promovida, &reg_promovido);
-    printf("chave promovida: %d\n", chave_promovida);
-    printf("reg promovida: %d\n", reg_promovido);
-    printf("aux: %d\n", aux);
     if(aux != -1){ // cria nova raiz
 
         return criaNO23(arq_index, chave_promovida, reg_promovido, -1, -1, pos, aux, -1, 1);

@@ -99,10 +99,6 @@ void insere_livro(LIVRO *p, ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
     arq_indices->cab.raiz = insere(arq_indices, arq_indices->cab.raiz, p->cod, pos_inserir);
     grava_cabecalho(arq_indices);
     grava_bloco(arq_dados, p, pos_inserir);
-    
-    printf("raiz: %d\n", arq_indices->cab.raiz);
-    printf("topo: %d\n", arq_indices->cab.topo);
-    printf("livre: %d\n", arq_indices->cab.livre);
 }
 
 // Realiza a busca por um livro nos arquivos de índices e dados
