@@ -203,23 +203,25 @@ void in_ordem(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos){
 // O parâmetro pos deve ser um índice válido do arquivo ou -1 para indicar um nó nulo.
 // pós-requisitos:A função retorna corretamente a quantidade total de chaves da árvore B.
 // Nenhuma estrutura da árvore é alterada, apenas a contagem é realizada.
-int contar_chaves(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos) {
-    // if (pos == -1) {
-    //     return 0;  // Caso base: nó nulo não contribui para a contagem
-    // }
+int contar_chaves(ARQ_BIN* arq_index, int pos) {
+    if (pos == -1) {
+        return 0;
+    }
 
-    // int i, total = 0;
-    // NO r;
+    NO no;
+    ler_bloco(arq_index, pos, &no);
 
-    // ler_bloco(arq_index, pos, &r);  // Lê o nó da árvore B na posição pos
-
-    // for (i = 0; i < r.numChaves; i++) {
-    //     total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta à esquerda
-    //     total += 1;  // Conta a chave atual
-    // }
-
-    // total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta a subárvore direita
-    // return total;
+    // Conta as chaves no nó atual
+    int total = no.n;
+    
+    // Soma as chaves das subárvores
+    total += contar_chaves(arq_index, no.filho_esq);
+    total += contar_chaves(arq_index, no.filho_meio);
+    if (no.n == 2) {
+        total += contar_chaves(arq_index, no.filho_dir);
+    }
+    
+    return total;
 }
 
 // Lista todos os livros presentes nos arquivos de índices e dados
@@ -237,19 +239,19 @@ void listar_livros(ARQ_BIN* arq_index, ARQ_BIN* arq_dados){
 // Pré-condição: Ponteiro válido para o arquivo de índices
 // Pós-condição: As posições livres são impressas na tela
 void imprime_livre_index(ARQ_BIN* arq){
-    // if(arq->cab.livre == -1){
-    //     printf("Lista de livres vazia!\n");
-    //     return;
-    // }
+    if(arq->cab.livre == -1){
+        printf("Lista de livres vazia!\n");
+        return;
+    }
 
-    // NO no;
-    // int livre = arq->cab.livre;
-    // while(livre != -1){
-    //     printf("%d -> ", livre);
-    //     ler_bloco(arq, livre, &no);
-    //     livre = no.filhos[0];
-    // }
-    // printf("\n");
+    NO no;
+    int livre = arq->cab.livre;
+    while(livre != -1){
+        printf("%d -> ", livre);
+        ler_bloco(arq, livre, &no);
+        livre = no.n;
+    }
+    printf("\n");
 }
 
 // Imprime as posições livres no arquivo de dados
@@ -293,23 +295,6 @@ void GerenciaRemocao(ARQ_BIN *arq_index, ARQ_BIN *arq_dados, int codigo){
     // grava_bloco(arq_dados, &p, r.registro[pos]);
     // printf("Codigo [%d] excluido com sucesso\n", codigo);
 }
-
-// imprime os dados de um no da arvore23
-// pre-condicao: arvore existente
-// pos-condicao: nenhum
-// void imprime_no(NO* no){
-//     if(no->n == 1){
-//         printf("n = %d\n", no->n);
-//         printf("[ %d |   ]\n", no->chave_esq);
-//         printf("[ %d |   ]\n", no->reg_esq);
-//         printf("[ %d | %d |   ]\n", no->filho_esq, no->filho_meio);
-//     }else{
-//         printf("n = %d\n", no->n);
-//         printf("[ %d | %d ]\n", no->chave_esq, no->chave_dir);
-//         printf("[ %d | %d ]\n", no->reg_esq, no->reg_dir);
-//         printf("[ %d | %d | %d ]\n", no->filho_esq, no->filho_meio, no->filho_dir);
-//     }
-// }
 
 
 #endif

@@ -76,7 +76,7 @@ int main(){
                 loadPath(&arq_indices, &arq_dados);
                 break;
             case 9:
-                printf("Total de livros: %d\n", contar_chaves(&arq_indices, &arq_dados, arq_indices.cab.raiz));
+                printf("Total de livros: %d\n", contar_chaves(&arq_indices, arq_indices.cab.raiz));
                 break;
             default:
                 printf("Entrada invalida\n");

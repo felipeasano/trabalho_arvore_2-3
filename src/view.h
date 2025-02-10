@@ -51,7 +51,7 @@ void in_ordem(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos);
 // O parâmetro pos deve ser um índice válido do arquivo ou -1 para indicar um nó nulo.
 // pós-requisitos:A função retorna corretamente a quantidade total de chaves da árvore B.
 // Nenhuma estrutura da árvore é alterada, apenas a contagem é realizada.
-int contar_chaves(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos);
+int contar_chaves(ARQ_BIN* arq_index, int pos);
 
 // Lista todos os livros presentes nos arquivos de índices e dados
 // Pré-condição: Ponteiros válidos para os arquivos de índices e dados
