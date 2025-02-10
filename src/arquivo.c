@@ -63,24 +63,6 @@ void grava_bloco(ARQ_BIN* arq, void *p, int pos) {
     fwrite(p, arq->tam_bloco, 1, arq->f);
 }
 
-// Atualiza o cabecalho e retorna a posicao do bloco
-// Pré-condição: Arquivo binario aberto e cabecalho existente
-// Pós-condição: cabecalho atualizado e bloco alocado (pos)
-int aloca_bloco(ARQ_BIN* arq){
-    int pos;
-    if(arq->cab.livre == -1){
-        pos = arq->cab.topo;
-        arq->cab.topo++;
-        grava_cabecalho(arq);
-        return pos;
-    }
-    pos = arq->cab.livre;
-    set_pos(arq, pos);
-    fread(&arq->cab.livre, sizeof(int), 1, arq->f);
-    grava_cabecalho(arq);
-    return pos;
-}
-
 // Atualiza pos livre do cabecalho
 // Pré-condição: Arquivo binario aberto, cabecalho existente e posicao existente
 // Pós-condição: cabecalho (pos livre) atualizado

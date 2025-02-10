@@ -89,51 +89,42 @@ LIVRO recebeLivro(){
 }
 
 
+
 // Insere um novo livro nos arquivos de índices e dados
 // Pré-condição: Ponteiro válido para a estrutura de livro, ponteiros válidos para os arquivos de índices e dados
 // Pós-condição: O livro é inserido nos arquivos de índices e dados
 void insere_livro(LIVRO *p, ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
 
-    int pos_inserir = aloca_bloco(arq_dados);
-    if(insere(arq_indices, p->cod, pos_inserir)){
-        grava_bloco(arq_dados, p, pos_inserir);
-        if(pos_inserir == arq_dados->cab.topo){
-            arq_dados->cab.topo++;
-        }
-        printf("Livro com ID [%d] inserido com sucesso\n", p->cod);
-    }else{
-        if(arq_dados->cab.livre != -1){
-            arq_dados->cab.livre = pos_inserir;
-        }
-        printf("Codigo [%d] ja cadastrado\n", p->cod);
-    }
-    grava_cabecalho(arq_dados);
+    int pos_inserir = get_posicao_dados(arq_dados);
+    arq_indices->cab.raiz = insere(arq_indices, arq_indices->cab.raiz, p->cod, pos_inserir);
+    grava_cabecalho(arq_indices);
+    grava_bloco(arq_dados, p, pos_inserir);
 }
 
 // Realiza a busca por um livro nos arquivos de índices e dados
 // Pré-condição: Ponteiros válidos para os arquivos de índices e dados
 // Pós-condição: Os dados do livro são exibidos na tela, se encontrado
 void busca_livro(ARQ_BIN* arq_index, ARQ_BIN* arq_dados){
-    if(arq_index->cab.raiz == -1){
-        printf("Nenhum livro cadastrado ainda...\n");
-        return;
-    }
+    // if(arq_index->cab.raiz == -1){
+    //     printf("Nenhum livro cadastrado ainda...\n");
+    //     return;
+    // }
 
-    int pos, codigo;
+    // int pos, codigo;
 
-    printf("Entre com o codigo do livro: ");
-    scanf("%d%*c", &codigo);
-    int posicao_arvore = busca(arq_index, arq_index->cab.raiz, codigo, &pos);
-    if(posicao_arvore == -1){
-        printf("Codigo nao cadastrado!\n");
-        return;
-    }
-    NO no;
-    ler_bloco(arq_index, posicao_arvore, &no);
-    LIVRO p;
-    ler_bloco(arq_dados, no.registro[pos], &p);
+    // printf("Entre com o codigo do livro: ");
+    // scanf("%d%*c", &codigo);
+    // int posicao_arvore = busca(arq_index, arq_index->cab.raiz, codigo, &pos);
+    // if(posicao_arvore == -1){
+    //     printf("Codigo nao cadastrado!\n");
+    //     return;
+    // }
+    // NO no;
+    // ler_bloco(arq_index, posicao_arvore, &no);
+    // LIVRO p;
+    // ler_bloco(arq_dados, no.registro[pos], &p);
 
-    imprimeLivro(p);
+    // imprimeLivro(p);
 }
 
 //Realiza inclusoes em lote
@@ -184,20 +175,20 @@ void loadPath(ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
 //um ponteiro para um arquivo aberto de indices
 //pós-requisitos: Imprime na tela os dados do arquivo de dados em ordem crescente de código
 void in_ordem(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos){
-    if(pos == -1 ) {
-        return;
-    }
-    int i;
-    LIVRO p;
-    NO r;
-    ler_bloco(arq_index, pos, &r);
-    for(i = 0; i < r.numChaves; i++){
-        in_ordem(arq_index, arq_dados, r.filhos[i]);
-        ler_bloco(arq_dados, r.registro[i], &p);
-        imprimeLivro(p);
-        printf("\n");
-    }
-    in_ordem(arq_index, arq_dados, r.filhos[i]);
+    // if(pos == -1 ) {
+    //     return;
+    // }
+    // int i;
+    // LIVRO p;
+    // NO r;
+    // ler_bloco(arq_index, pos, &r);
+    // for(i = 0; i < r.numChaves; i++){
+    //     in_ordem(arq_index, arq_dados, r.filhos[i]);
+    //     ler_bloco(arq_dados, r.registro[i], &p);
+    //     imprimeLivro(p);
+    //     printf("\n");
+    // }
+    // in_ordem(arq_index, arq_dados, r.filhos[i]);
 }
 
 // pré-requisitos:O arquivo arq_index deve conter uma árvore B válida, garantindo que as posições referenciadas sejam corretas.
@@ -205,22 +196,22 @@ void in_ordem(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos){
 // pós-requisitos:A função retorna corretamente a quantidade total de chaves da árvore B.
 // Nenhuma estrutura da árvore é alterada, apenas a contagem é realizada.
 int contar_chaves(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos) {
-    if (pos == -1) {
-        return 0;  // Caso base: nó nulo não contribui para a contagem
-    }
+    // if (pos == -1) {
+    //     return 0;  // Caso base: nó nulo não contribui para a contagem
+    // }
 
-    int i, total = 0;
-    NO r;
+    // int i, total = 0;
+    // NO r;
 
-    ler_bloco(arq_index, pos, &r);  // Lê o nó da árvore B na posição pos
+    // ler_bloco(arq_index, pos, &r);  // Lê o nó da árvore B na posição pos
 
-    for (i = 0; i < r.numChaves; i++) {
-        total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta à esquerda
-        total += 1;  // Conta a chave atual
-    }
+    // for (i = 0; i < r.numChaves; i++) {
+    //     total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta à esquerda
+    //     total += 1;  // Conta a chave atual
+    // }
 
-    total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta a subárvore direita
-    return total;
+    // total += contar_chaves(arq_index, arq_dados, r.filhos[i]);  // Conta a subárvore direita
+    // return total;
 }
 
 // Lista todos os livros presentes nos arquivos de índices e dados
@@ -238,19 +229,19 @@ void listar_livros(ARQ_BIN* arq_index, ARQ_BIN* arq_dados){
 // Pré-condição: Ponteiro válido para o arquivo de índices
 // Pós-condição: As posições livres são impressas na tela
 void imprime_livre_index(ARQ_BIN* arq){
-    if(arq->cab.livre == -1){
-        printf("Lista de livres vazia!\n");
-        return;
-    }
+    // if(arq->cab.livre == -1){
+    //     printf("Lista de livres vazia!\n");
+    //     return;
+    // }
 
-    NO no;
-    int livre = arq->cab.livre;
-    while(livre != -1){
-        printf("%d -> ", livre);
-        ler_bloco(arq, livre, &no);
-        livre = no.filhos[0];
-    }
-    printf("\n");
+    // NO no;
+    // int livre = arq->cab.livre;
+    // while(livre != -1){
+    //     printf("%d -> ", livre);
+    //     ler_bloco(arq, livre, &no);
+    //     livre = no.filhos[0];
+    // }
+    // printf("\n");
 }
 
 // Imprime as posições livres no arquivo de dados
@@ -276,23 +267,23 @@ void imprime_livre_dados(ARQ_BIN* arq){
 // Pré-condição: Ponteiros válidos para os arquivos de índices e dados, código do livro
 // Pós-condição: O livro é removido dos arquivos de índices e dados
 void GerenciaRemocao(ARQ_BIN *arq_index, ARQ_BIN *arq_dados, int codigo){
-    int pos, posArquivo;
+    // int pos, posArquivo;
     
-    posArquivo = busca(arq_index, arq_index->cab.raiz, codigo, &pos);
-    if(posArquivo == -1){
-        printf("Codigo [%d] não encontrado\n", codigo);
-        return;
-    }
-    NO r;
-    ler_bloco(arq_index, posArquivo, &r);
-    remover(arq_index, codigo);
-    LIVRO p;
-    ler_bloco(arq_dados, r.registro[pos], &p);
-    p.cod = arq_dados->cab.livre;
-    arq_dados->cab.livre = r.registro[pos];
-    grava_cabecalho(arq_dados);
-    grava_bloco(arq_dados, &p, r.registro[pos]);
-    printf("Codigo [%d] excluido com sucesso\n", codigo);
+    // posArquivo = busca(arq_index, arq_index->cab.raiz, codigo, &pos);
+    // if(posArquivo == -1){
+    //     printf("Codigo [%d] não encontrado\n", codigo);
+    //     return;
+    // }
+    // NO r;
+    // ler_bloco(arq_index, posArquivo, &r);
+    // remover(arq_index, codigo);
+    // LIVRO p;
+    // ler_bloco(arq_dados, r.registro[pos], &p);
+    // p.cod = arq_dados->cab.livre;
+    // arq_dados->cab.livre = r.registro[pos];
+    // grava_cabecalho(arq_dados);
+    // grava_bloco(arq_dados, &p, r.registro[pos]);
+    // printf("Codigo [%d] excluido com sucesso\n", codigo);
 }
 
 // imprime os dados de um no da arvore23

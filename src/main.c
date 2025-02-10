@@ -17,6 +17,10 @@ int main(){
     int opcao;
     int info;
     LIVRO p;
+
+    imprime_cab(&arq_dados);
+    printf("\n");
+    imprime_cab(&arq_indices);
     
     while(1){
         //system("cls");
@@ -31,11 +35,9 @@ int main(){
                 printf("Fim do Programa\n");
                 return 0;
             case 1:
-                //cadastrar_produto(&arq_dados, &arq_indices);
                 p = recebeLivro();
-
                 insere_livro(&p, &arq_indices, &arq_dados);
-                //imprime_cab(&arq_indices);
+                puts("Livro inserido com sucesso!");
                 break;
             case 2:
                 //removerProduto();

@@ -47,15 +47,9 @@ typedef struct fila{
 // Pós-condição: Retorna 1 se o nó é folha, caso contrário retorna 0
 int eh_folha(NO* no);
 
-// Verifica se o nó fornecido está em overflow
-// Pré-condição: Ponteiro para nó válido
-// Pós-condição: Retorna 1 se o nó está em overflow, caso contrário retorna 0
-int eh_overflow(NO* no);
+int get_posicao_dados(ARQ_BIN* arq);
 
-// Verifica se o nó fornecido está em underflow
-// Pré-condição: Ponteiro para nó válido
-// Pós-condição: Retorna 1 se o nó está em underflow, caso contrário retorna 0
-int eh_underflow(NO* no);
+int get_posicao_indices(ARQ_BIN* arq);
 
 // Imprime um nó da árvore
 // Pré-condição: Ponteiro para nó válido
@@ -76,7 +70,7 @@ int retorna_livre(ARQ_BIN* arq_index);
 // Pré-condição: Ponteiro para arquivo de índices válido, posição do nó a ser splitado,
 // ponteiros para as variáveis que armazenarão o elemento do meio e seu ponteiro de dado
 // Pós-condição: Retorna a posição do novo nó criado (posY), além do elemento do meio do nó onde ocorreu o split (m e m_ptDado)
-int split(ARQ_BIN* arq_index, int posX, int *m, int *m_ptDado);
+int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* chave_promovida, int* reg_promovido);
 
 // Realiza uma busca na árvore para encontrar a posição de um dado específico
 // Pré-condição: Ponteiro para nó válido, informação a ser buscada, ponteiro para a variável que armazenará a posição encontrada
@@ -88,16 +82,10 @@ int buscaPos(NO* r, int info, int * pos);
 // Pós-condição: Nenhuma
 void adiciona_direita(NO* r, int pos_inserido, int chave, int ptdado, int pos_novo_no);
 
-// Função auxiliar para inserção na árvore
-// Pré-condição: Ponteiro para arquivo de índices válido, posição do arquivo onde ocorrerá a inserção,
-// chave e ponteiro de dado a serem inseridos
-// Pós-condição: Retorna a posição onde a inserção foi realizada
-int insere_aux(ARQ_BIN* arq_index, int pos_arquivo, int chave, int ptdado);
-
 // Insere um novo elemento na árvore
 // Pré-condição: Ponteiro para arquivo de índices válido, chave e ponteiro de dado a serem inseridos
 // Pós-condição: Retorna a posição onde a inserção foi realizada
-int insere(ARQ_BIN* arq_index, int chave, int ptdado);
+int insere(ARQ_BIN* arq_index, int pos, int chave, int reg);
 
 // Realiza uma busca na árvore para encontrar a posição de um dado específico
 // Pré-condição: Ponteiro para arquivo de índices válido, posição do arquivo onde inicia a busca,
