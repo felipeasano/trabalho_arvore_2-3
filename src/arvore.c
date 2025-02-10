@@ -80,6 +80,7 @@ int criaNO23(ARQ_BIN* arq_index, int chave_esq, int reg_esq, int chave_dir, int 
     no->filho_dir = sub_dir;
     no->n = 1;
     grava_bloco(arq_index, no, pos);
+    imprime_no(no);
     free(no);
     return pos;
 }
@@ -141,54 +142,42 @@ int dequeue(FILA* f){
     return pos;
 }
 
-// Imprime um nó da árvore
-// Pré-condição: Ponteiro para nó válido
-// Pós-condição: Nenhuma
-void imprime_noB(NO* no){
-    // printf("-[");
-    // for(int i = 0; i < no->numChaves; i++){
-    //     printf("%d", no->chaves[i]);
-    //     if(i+1 < no->numChaves) printf("|");
-    // }
-    // printf("]-");
-}
-
 // Imprime a árvore por níveis
 // Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
 // Pós-condição: Impressão da árvore por níveis
 void imprime_por_niveis(ARQ_BIN* arq_index){
 
-    // if(arq_index->cab.raiz == -1){
-    //     printf("Nenhum livro cadastrado ainda...\n");
-    //     return;
-    // }
+    if(arq_index->cab.raiz == -1){
+        printf("Nenhum livro cadastrado ainda...\n");
+        return;
+    }
 
-    // FILA* fila = cria_fila();
-    // if (arq_index->cab.raiz == -1) {
-    //     return;
-    // }
-    // enqueue(fila, arq_index->cab.raiz);
-    // enqueue(fila, -1);
-    // while (!fila_vazia(fila)) {
-    //     int pos = dequeue(fila);
-    //     if (pos == -1) {
-    //         printf("\n");
-    //         if (!fila_vazia(fila)) {
-    //             enqueue(fila, -1);
-    //         }
-    //         continue;
-    //     }
-    //     NO no;
-    //     ler_bloco(arq_index, pos, &no);
-    //     imprime_noB(&no);
-    //     if (!eh_folha(&no)) {
-    //         int n = no.numChaves;
-    //         for (int i=0; i<n+1; ++i) {
-    //             enqueue(fila, no.filhos[i]);
-    //         }
-    //     }
-    // }
-    // free(fila);
+    FILA* fila = cria_fila();
+    if (arq_index->cab.raiz == -1) {
+        return;
+    }
+    enqueue(fila, arq_index->cab.raiz);
+    enqueue(fila, -1);
+    while (!fila_vazia(fila)) {
+        int pos = dequeue(fila);
+        if (pos == -1) {
+            printf("\n");
+            if (!fila_vazia(fila)) {
+                enqueue(fila, -1);
+            }
+            continue;
+        }
+        NO no;
+        ler_bloco(arq_index, pos, &no);
+        printf("[ %d | %d ] ", no.chave_esq, no.n != 1 ? no.chave_dir : -1);
+        if (!eh_folha(&no)) {
+
+            enqueue(fila, no.filho_esq);
+            enqueue(fila, no.filho_meio);
+            if(no.n != 1) enqueue(fila, no.filho_dir);
+        }
+    }
+    free(fila);
 }
 
 //pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos 1 nó
@@ -206,7 +195,6 @@ int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* 
         no->filho_dir = -1;
         no->n = 1;
         grava_bloco(arq_index, no, pos);
-        free(no);
         return criaNO23(arq_index, chave, reg, -1, -1, aux, sub_arvore, -1, 1);
     }
     if(chave >= no->chave_esq){ // nova chave entra no meio, a nova chave e promovida
@@ -216,7 +204,6 @@ int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* 
         no->filho_dir = -1;
         no->n = 1;
         grava_bloco(arq_index, no, pos);
-        free(no);
         return criaNO23(arq_index, no->chave_dir, no->reg_dir, -1, -1, sub_arvore, aux, -1, 1);
     }
     // nova chave entra mais a esquerda, promove a chave esquerda

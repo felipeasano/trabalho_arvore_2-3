@@ -55,11 +55,9 @@ int main(){
                 GerenciaRemocao(&arq_indices, &arq_dados, info);
                 break;
             case 3:
-                //imprimirInformacoesProduto();
                 busca_livro(&arq_indices, &arq_dados);
                 break;
             case 4:
-                //imprimirListaProdutos();
                 listar_livros(&arq_indices, &arq_dados);
                 break;
             case 5:

@@ -172,20 +172,31 @@ void loadPath(ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
 //um ponteiro para um arquivo aberto de indices
 //pós-requisitos: Imprime na tela os dados do arquivo de dados em ordem crescente de código
 void in_ordem(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos){
-    // if(pos == -1 ) {
-    //     return;
-    // }
-    // int i;
-    // LIVRO p;
-    // NO r;
-    // ler_bloco(arq_index, pos, &r);
-    // for(i = 0; i < r.numChaves; i++){
-    //     in_ordem(arq_index, arq_dados, r.filhos[i]);
-    //     ler_bloco(arq_dados, r.registro[i], &p);
-    //     imprimeLivro(p);
-    //     printf("\n");
-    // }
-    // in_ordem(arq_index, arq_dados, r.filhos[i]);
+    if(pos == -1 ) {
+        return;
+    }
+    int i;
+    LIVRO p;
+    NO no;
+    ler_bloco(arq_index, pos, &no);
+    if(no.filho_esq != -1){
+        in_ordem(arq_index, arq_dados, no.filho_esq);
+    }
+
+    ler_bloco(arq_dados, no.reg_esq, &p);
+    imprimeLivro(p);
+
+    if(no.filho_meio != -1){
+        in_ordem(arq_index, arq_dados, no.filho_meio);
+    }
+
+    if(no.n == 2){
+        ler_bloco(arq_dados, no.reg_dir, &p);
+        imprimeLivro(p);
+        if(no.filho_dir != -1){
+            in_ordem(arq_index, arq_dados, no.filho_dir);
+        }
+    }
 }
 
 // pré-requisitos:O arquivo arq_index deve conter uma árvore B válida, garantindo que as posições referenciadas sejam corretas.
