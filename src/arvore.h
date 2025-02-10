@@ -91,7 +91,7 @@ int insere(ARQ_BIN* arq_index, int pos, int chave, int reg);
 // Pré-condição: Ponteiro para arquivo de índices válido, posição do arquivo onde inicia a busca,
 // código a ser buscado, ponteiro para a variável que armazenará a posição encontrada
 // Pós-condição: Retorna 1 se o código foi encontrado, caso contrário retorna 0 e atualiza a posição
-int busca(ARQ_BIN* arq_index, int pos_arq, int cod, int *pos);
+int busca(ARQ_BIN* arq_index, int pos_arq, int chave);
 
 //pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
 //cabeçalho de indices gravado

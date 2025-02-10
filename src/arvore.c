@@ -250,15 +250,13 @@ int buscaPos(NO* r, int info, int * pos) {
 // chave e ponteiro de dado a serem inseridos
 // Pós-condição: Retorna a posição onde a inserção foi realizada
 int insere_aux(ARQ_BIN* arq_index, int pos, int chave, int reg, int* chave_promovida, int* reg_promovido){
-    NO* no;
+    NO* no = (NO*)malloc(sizeof(NO));
     ler_bloco(arq_index, pos, no);
     if(eh_folha(no)){
         if(no->n == 1){
-            puts("n = 1");
             adicionaChave(arq_index, no, pos, chave, reg, -1);
             return -1;
         }
-            puts("n = 2");
         return split(arq_index, pos, chave, reg, -1, chave_promovida, reg_promovido);
     }
     int aux;
@@ -294,7 +292,11 @@ int insere(ARQ_BIN* arq_index, int pos, int chave, int reg){
     int chave_promovida;
     int reg_promovido;
     int aux = insere_aux(arq_index, arq_index->cab.raiz, chave, reg, &chave_promovida, &reg_promovido);
+    printf("chave promovida: %d\n", chave_promovida);
+    printf("reg promovida: %d\n", reg_promovido);
+    printf("aux: %d\n", aux);
     if(aux != -1){ // cria nova raiz
+
         return criaNO23(arq_index, chave_promovida, reg_promovido, -1, -1, pos, aux, -1, 1);
     }
     return pos;
@@ -304,34 +306,36 @@ int insere(ARQ_BIN* arq_index, int pos, int chave, int reg){
 // Pré-condição: Ponteiro para arquivo de índices válido, posição do arquivo onde inicia a busca,
 // código a ser buscado, ponteiro para a variável que armazenará a posição encontrada
 // Pós-condição: Retorna 1 se o código foi encontrado, caso contrário retorna 0 e atualiza a posição
-int busca(ARQ_BIN* arq_index, int pos_arq, int cod, int *pos){
-    // if(pos_arq == -1){
-    //     return -1;
-    // }
+int busca(ARQ_BIN* arq_index, int pos_arq, int chave){
+    
+    NO* no = (NO*)malloc(sizeof(NO));
+    if(pos_arq == -1){
+        return -1;
+    }
 
-    // NO no;
-    // ler_bloco(arq_index, pos_arq, &no);
+    ler_bloco(arq_index, pos_arq, no);
 
-    // if(no.n == 0){
-    //     return -1;
-    // }
-    // if(no.chave_esq == cod){
-    //     return no.chave_esq;
-    // }
-    // if(no.n == 2 && no.chave_dir == cod){
-    //     return no.chave_esq;
-    // }
+    // se a chave esta no no
+    if(no->chave_esq == chave){
+        return no->reg_esq;
+    }
+    if(no->n == 2 && no->chave_dir == chave){
+        return no->reg_dir;
+    }
 
-    // int i = 0;
-    // while(i < no.numChaves && no.chaves[i] < cod){
-    //     i++;
-    // }
-    // if((i+1) > no.numChaves || no.chaves[i] > cod){
-    //     int filhoI = no.filhos[i];
-    //     return busca(arq_index, filhoI, cod, pos);
-    // }
-    // *pos = i;
-    // return pos_arq;
+    if(eh_folha(no)) return -1; // estou na folha e nao achei
+
+    // segue a busca
+    if(chave < no->chave_esq){
+        return busca(arq_index, no->filho_esq, chave);
+    }
+    if(no->n == 1){
+        return busca(arq_index, no->filho_meio, chave);
+    }
+    if(chave < no->chave_dir){
+        return busca(arq_index, no->filho_meio, chave);
+    }
+    return busca(arq_index, no->filho_dir, chave);
 }
 
 //pré-requisitos: Ponteiro não nulo para nó da árvoreB

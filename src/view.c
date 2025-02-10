@@ -109,26 +109,24 @@ void insere_livro(LIVRO *p, ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
 // Pré-condição: Ponteiros válidos para os arquivos de índices e dados
 // Pós-condição: Os dados do livro são exibidos na tela, se encontrado
 void busca_livro(ARQ_BIN* arq_index, ARQ_BIN* arq_dados){
-    // if(arq_index->cab.raiz == -1){
-    //     printf("Nenhum livro cadastrado ainda...\n");
-    //     return;
-    // }
+    if(arq_index->cab.raiz == -1){
+        printf("Nenhum livro cadastrado ainda...\n");
+        return;
+    }
 
-    // int pos, codigo;
+    int codigo;
 
-    // printf("Entre com o codigo do livro: ");
-    // scanf("%d%*c", &codigo);
-    // int posicao_arvore = busca(arq_index, arq_index->cab.raiz, codigo, &pos);
-    // if(posicao_arvore == -1){
-    //     printf("Codigo nao cadastrado!\n");
-    //     return;
-    // }
-    // NO no;
-    // ler_bloco(arq_index, posicao_arvore, &no);
-    // LIVRO p;
-    // ler_bloco(arq_dados, no.registro[pos], &p);
+    printf("Entre com o codigo do livro: ");
+    scanf("%d%*c", &codigo);
+    int posicao = busca(arq_index, arq_index->cab.raiz, codigo);
+    if(posicao == -1){
+        printf("Codigo nao cadastrado!\n");
+        return;
+    }
+    LIVRO p;
+    ler_bloco(arq_dados, posicao, &p);
 
-    // imprimeLivro(p);
+    imprimeLivro(p);
 }
 
 //Realiza inclusoes em lote

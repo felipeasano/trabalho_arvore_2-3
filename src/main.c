@@ -21,6 +21,15 @@ int main(){
     imprime_cab(&arq_dados);
     printf("\n");
     imprime_cab(&arq_indices);
+
+    NO* no = (NO*)malloc(sizeof(NO));
+
+        ler_bloco(&arq_indices, 0, no);
+        imprime_no(no);
+        printf("\n\n");
+        ler_bloco(&arq_indices, 1, no);
+        imprime_no(no);
+
     
     while(1){
         //system("cls");
