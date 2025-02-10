@@ -3,11 +3,18 @@
 
 #include "arvore.h"
 
+void imprime_no(NO* no){
+    printf("n = %d\n", no->n);
+    printf("[ %d | %d ]\n", no->chave_esq, no->chave_dir);
+    printf("[ %d | %d ]\n", no->reg_esq, no->reg_dir);
+    printf("[ %d | %d | %d ]\n\n", no->filho_esq, no->filho_meio, no->filho_dir);
+}
+
 // Verifica se o nó fornecido é folha
 // Pré-condição: Ponteiro para manipulador de indices válido
 // Pós-condição: Nenhuma
 int eh_folha(NO* no){
-    return (no->filho_dir == -1);
+    return (no->filho_esq == -1);
 }
 
 void adicionaChave(ARQ_BIN* arq_indice, NO* no, int pos, int chave, int reg, int novo_filho){
@@ -50,7 +57,6 @@ int get_posicao_indices(ARQ_BIN* arq){
         pos = arq->cab.livre;
         ler_bloco(arq, arq->cab.livre, no);
         arq->cab.livre = no->n;
-        grava_cabecalho(arq);
     }else{
         pos = arq->cab.topo;
         arq->cab.topo++;
@@ -72,9 +78,9 @@ int criaNO23(ARQ_BIN* arq_index, int chave_esq, int reg_esq, int chave_dir, int 
     no->filho_esq = sub_esq;
     no->filho_meio = sub_meio;
     no->filho_dir = sub_dir;
-
+    no->n = 1;
     grava_bloco(arq_index, no, pos);
-    grava_cabecalho(arq_index);
+    free(no);
     return pos;
 }
 
@@ -191,7 +197,7 @@ void imprime_por_niveis(ARQ_BIN* arq_index){
 //na posição "posY". Retorna "posY", além do elemento do meio do nó onde ocorreu o split
 int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* chave_promovida, int* reg_promovido) {
     int aux;
-    NO* no;
+    NO* no = (NO*)malloc(sizeof(NO));
     ler_bloco(arq_index, pos, no);
     if(chave > no->chave_dir){ // nova chave entra mais a direita, promove a chave direita
         *chave_promovida = no->chave_dir;
@@ -199,6 +205,8 @@ int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* 
         aux = no->filho_dir;
         no->filho_dir = -1;
         no->n = 1;
+        grava_bloco(arq_index, no, pos);
+        free(no);
         return criaNO23(arq_index, chave, reg, -1, -1, aux, sub_arvore, -1, 1);
     }
     if(chave >= no->chave_esq){ // nova chave entra no meio, a nova chave e promovida
@@ -207,7 +215,9 @@ int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* 
         aux = no->filho_dir;
         no->filho_dir = -1;
         no->n = 1;
-        return criaNO23(arq_index, no->chave_dir, no->reg_dir, -1, -1, no->filho_dir, sub_arvore, -1, 1);
+        grava_bloco(arq_index, no, pos);
+        free(no);
+        return criaNO23(arq_index, no->chave_dir, no->reg_dir, -1, -1, sub_arvore, aux, -1, 1);
     }
     // nova chave entra mais a esquerda, promove a chave esquerda
     *chave_promovida = no->chave_esq;
@@ -218,6 +228,8 @@ int split(ARQ_BIN* arq_index, int pos, int chave, int reg, int sub_arvore, int* 
     no->n = 1;
     no->filho_dir = -1;
     no->filho_meio = sub_arvore;
+    grava_bloco(arq_index, no, pos);
+    free(no);
     return aux;
 }
 
@@ -242,9 +254,11 @@ int insere_aux(ARQ_BIN* arq_index, int pos, int chave, int reg, int* chave_promo
     ler_bloco(arq_index, pos, no);
     if(eh_folha(no)){
         if(no->n == 1){
+            puts("n = 1");
             adicionaChave(arq_index, no, pos, chave, reg, -1);
             return -1;
         }
+            puts("n = 2");
         return split(arq_index, pos, chave, reg, -1, chave_promovida, reg_promovido);
     }
     int aux;
@@ -264,7 +278,7 @@ int insere_aux(ARQ_BIN* arq_index, int pos, int chave, int reg, int* chave_promo
     if(no->n == 1){
         adicionaChave(arq_index, no, pos, chave_aux, reg_aux, aux);
         return -1;
-    }else{ // previsa fazer split
+    }else{ // precisa fazer split
         return split(arq_index, pos, chave_aux, reg_aux, aux, chave_promovida, reg_promovido);
     }
 }
@@ -273,6 +287,7 @@ int insere_aux(ARQ_BIN* arq_index, int pos, int chave, int reg, int* chave_promo
 // Pré-condição: Ponteiro para arquivo de índices válido, chave e ponteiro de dado a serem inseridos
 // Pós-condição: Retorna a posição onde a inserção foi realizada
 int insere(ARQ_BIN* arq_index, int pos, int chave, int reg){
+    
     if(arq_index->cab.raiz == -1){
         return criaNO23(arq_index, chave, reg, -1, -1, -1, -1, -1, 1);
     }
@@ -282,6 +297,7 @@ int insere(ARQ_BIN* arq_index, int pos, int chave, int reg){
     if(aux != -1){ // cria nova raiz
         return criaNO23(arq_index, chave_promovida, reg_promovido, -1, -1, pos, aux, -1, 1);
     }
+    return pos;
 }
 
 // Realiza uma busca na árvore para encontrar a posição de um dado específico

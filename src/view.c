@@ -99,6 +99,10 @@ void insere_livro(LIVRO *p, ARQ_BIN* arq_indices, ARQ_BIN* arq_dados){
     arq_indices->cab.raiz = insere(arq_indices, arq_indices->cab.raiz, p->cod, pos_inserir);
     grava_cabecalho(arq_indices);
     grava_bloco(arq_dados, p, pos_inserir);
+    
+    printf("raiz: %d\n", arq_indices->cab.raiz);
+    printf("topo: %d\n", arq_indices->cab.topo);
+    printf("livre: %d\n", arq_indices->cab.livre);
 }
 
 // Realiza a busca por um livro nos arquivos de índices e dados
@@ -148,7 +152,6 @@ void incluiLote(FILE *fr, ARQ_BIN* arq_indices, ARQ_BIN* arq_dados) {
         // imprimeLivro(p);
         insere_livro(&p, arq_indices, arq_dados);
     }
-    system("cls");
     printf("Arquivo carregado com sucesso!\n");
     fclose(fr);
 }
@@ -289,19 +292,19 @@ void GerenciaRemocao(ARQ_BIN *arq_index, ARQ_BIN *arq_dados, int codigo){
 // imprime os dados de um no da arvore23
 // pre-condicao: arvore existente
 // pos-condicao: nenhum
-void imprime_no(NO* no){
-    if(no->n == 1){
-        printf("n = %d\n", no->n);
-        printf("[ %d |   ]\n", no->chave_esq);
-        printf("[ %d |   ]\n", no->reg_esq);
-        printf("[ %d | %d |   ]\n", no->filho_esq, no->filho_meio);
-    }else{
-        printf("n = %d\n", no->n);
-        printf("[ %d | %d ]\n", no->chave_esq, no->chave_dir);
-        printf("[ %d | %d ]\n", no->reg_esq, no->reg_dir);
-        printf("[ %d | %d | %d ]\n", no->filho_esq, no->filho_meio, no->filho_dir);
-    }
-}
+// void imprime_no(NO* no){
+//     if(no->n == 1){
+//         printf("n = %d\n", no->n);
+//         printf("[ %d |   ]\n", no->chave_esq);
+//         printf("[ %d |   ]\n", no->reg_esq);
+//         printf("[ %d | %d |   ]\n", no->filho_esq, no->filho_meio);
+//     }else{
+//         printf("n = %d\n", no->n);
+//         printf("[ %d | %d ]\n", no->chave_esq, no->chave_dir);
+//         printf("[ %d | %d ]\n", no->reg_esq, no->reg_dir);
+//         printf("[ %d | %d | %d ]\n", no->filho_esq, no->filho_meio, no->filho_dir);
+//     }
+// }
 
 
 #endif
