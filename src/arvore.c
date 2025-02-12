@@ -339,8 +339,6 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
     ler_bloco(arq_index, pos_irmao, no_irmao);
     ler_bloco(arq_index, pos_no_vazio, no_vazio);
 
-    // adicionaChave(arq_index, no_pai, pos_pai, no_irmao->chave_esq, no_irmao->reg_esq, -1);
-    
     if(eh_vazio_esquerda){
         no_pai->chave_dir = no_irmao->chave_esq;
         no_pai->reg_dir = no_irmao->reg_esq;
@@ -357,9 +355,9 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
         no_pai->filho_esq = no_irmao->filho_esq;
     }
 
-    no_irmao->n == 0;
+    no_irmao->n = 0;
     encadeia_livre(arq_index, no_irmao, pos_irmao);
-    grava_bloco(arq_index, no_pai, pos_pai)
+    grava_bloco(arq_index, no_pai, pos_pai);
 }
 
 void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazio, int eh_vazio_esquerda){
@@ -368,7 +366,7 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
     NO* no_vazio = (NO*)malloc(sizeof(NO));
     ler_bloco(arq_index, pos_pai, no_pai);
     ler_bloco(arq_index, pos_irmao, no_irmao);
-    ler_bloco(arq_index, pos_no_vazio, no_vazio);
+    ler_bloco(arq_index, pos_vazio, no_vazio);
 
     if(eh_vazio_esquerda){
         // chave esquerda do no vazio recebe chave esquerda do pai
@@ -411,9 +409,8 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
     grava_bloco(arq_index, no_irmao, pos_irmao);
 }
 
-//
-no_irmao->n = 1;pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
 //cabeçalho de indices gravado e uma posição valida para esse arquvo
+//pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
 //pós-requisitos: Info será removido da arvoreB
 void removeAux(ARQ_BIN* arq_index, int posArquvio, int info){
     // if(posArquvio == -1){
