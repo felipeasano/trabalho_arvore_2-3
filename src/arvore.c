@@ -329,7 +329,7 @@ void encadeia_livre(ARQ_BIN* arq_index, NO* no, int pos){
     grava_bloco(arq_index, no, pos);
 }
 
-//pré-requisitos: arquivo aberto
+//pré-requisitos: arquivo aberto, pai e irmao com apenas 1 chave
 //pós-requisitos: resultado do merge
 void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int eh_vazio_esquerda){
     NO* no_pai = (NO*)malloc(sizeof(NO));
@@ -339,12 +339,19 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
     ler_bloco(arq_index, pos_irmao, no_irmao);
     ler_bloco(arq_index, pos_no_vazio, no_vazio);
 
-    adicionaChave(arq_index, no_pai, pos_pai, no_irmao->chave_esq, no_irmao->reg_esq, -1);
+    // adicionaChave(arq_index, no_pai, pos_pai, no_irmao->chave_esq, no_irmao->reg_esq, -1);
+    
     if(eh_vazio_esquerda){
+        no_pai->chave_dir = no_irmao->chave_esq;
+        no_pai->reg_dir = no_irmao->reg_esq;
         no_pai->filho_esq = no_vazio->filho_esq;
         no_pai->filho_meio = no_irmao->filho_esq;
         no_pai->filho_dir = no_irmao->filho_meio;
     }else{
+        no_pai->chave_dir = no_pai->chave_esq;
+        no_pai->reg_dir = no_pai->reg_esq;
+        no_pai->chave_esq = no_irmao->chave_esq;
+        no_pai->reg_esq = no_irmao->reg_esq;
         no_pai->filho_dir = no_vazio->filho_esq;
         no_pai->filho_meio = no_irmao->filho_meio;
         no_pai->filho_esq = no_irmao->filho_esq;
@@ -355,7 +362,57 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
     grava_bloco(arq_index, no_pai, pos_pai)
 }
 
-//pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
+void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazio, int eh_vazio_esquerda){
+    NO* no_pai = (NO*)malloc(sizeof(NO));
+    NO* no_irmao = (NO*)malloc(sizeof(NO));
+    NO* no_vazio = (NO*)malloc(sizeof(NO));
+    ler_bloco(arq_index, pos_pai, no_pai);
+    ler_bloco(arq_index, pos_irmao, no_irmao);
+    ler_bloco(arq_index, pos_no_vazio, no_vazio);
+
+    if(eh_vazio_esquerda){
+        // chave esquerda do no vazio recebe chave esquerda do pai
+        no_vazio->chave_esq = no_pai->chave_esq;
+        no_vazio->reg_esq = no_pai->reg_esq;
+        no_vazio->n = 1; // atualiza numero de chaves do no vazio
+        
+        // chave esquerda do pai recebe chave esquerda do irmao
+        no_pai->chave_esq = no_irmao->chave_esq;
+        no_pai->reg_esq = no_irmao->reg_esq;
+
+        // chave esquerda do irmao recebe chave direta dele mesmo
+        no_irmao->chave_esq = no_irmao->chave_dir; // chave esquerda do irmao recebe chave direita do irmao
+        no_irmao->reg_esq = no_irmao->reg_dir;
+        no_irmao->filho_dir = -1;
+        no_irmao->n = 1; // atualiza numero de chaves dos irmao
+
+        no_vazio->filho_meio = no_irmao->filho_esq; // filho do meio do no vazio recebe filho esquerdo do irmao
+        no_irmao->filho_esq = no_irmao->filho_meio; // filho esquerdo do irmao recebe filho do meio do irmao
+        no_irmao->filho_meio = no_irmao->filho_dir; // filho do meio do irmao recebe filho esquerdo do irmao
+    }else{
+        // no vazio recebe chave do pai e filho da direita do irmao
+        no_vazio->chave_esq = no_pai->chave_esq;
+        no_vazio->reg_esq = no_pai->reg_esq;
+        no_vazio->filho_meio = no_vazio->filho_esq;
+        no_vazio->filho_esq = no_irmao->filho_dir;
+        no_vazio->n = 1;
+
+        // pai recebe chave direita do irmao
+        no_pai->chave_esq = no_irmao->chave_dir;
+        no_pai->reg_esq = no_irmao->reg_dir;
+        
+        // irmao perde a chave direita e filho da direita
+        no_irmao->filho_dir = -1;
+        no_irmao->n = 1;
+    }
+
+    grava_bloco(arq_index, no_pai, pos_pai);
+    grava_bloco(arq_index, no_irmao, pos_irmao);
+    grava_bloco(arq_index, no_irmao, pos_irmao);
+}
+
+//
+no_irmao->n = 1;pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
 //cabeçalho de indices gravado e uma posição valida para esse arquvo
 //pós-requisitos: Info será removido da arvoreB
 void removeAux(ARQ_BIN* arq_index, int posArquvio, int info){
