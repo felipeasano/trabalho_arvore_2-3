@@ -373,6 +373,7 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
         no_vazio->chave_esq = no_pai->chave_esq;
         no_vazio->reg_esq = no_pai->reg_esq;
         no_vazio->n = 1; // atualiza numero de chaves do no vazio
+        no_vazio->filho_meio = no_irmao->filho_esq; // filho do meio do no vazio recebe filho esquerdo do irmao
         
         // chave esquerda do pai recebe chave esquerda do irmao
         no_pai->chave_esq = no_irmao->chave_esq;
@@ -381,12 +382,11 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
         // chave esquerda do irmao recebe chave direta dele mesmo
         no_irmao->chave_esq = no_irmao->chave_dir; // chave esquerda do irmao recebe chave direita do irmao
         no_irmao->reg_esq = no_irmao->reg_dir;
-        no_irmao->filho_dir = -1;
-        no_irmao->n = 1; // atualiza numero de chaves dos irmao
-
-        no_vazio->filho_meio = no_irmao->filho_esq; // filho do meio do no vazio recebe filho esquerdo do irmao
+        
         no_irmao->filho_esq = no_irmao->filho_meio; // filho esquerdo do irmao recebe filho do meio do irmao
         no_irmao->filho_meio = no_irmao->filho_dir; // filho do meio do irmao recebe filho esquerdo do irmao
+        no_irmao->filho_dir = -1;
+        no_irmao->n = 1; // atualiza numero de chaves dos irmao
     }else{
         // no vazio recebe chave do pai e filho da direita do irmao
         no_vazio->chave_esq = no_pai->chave_esq;
