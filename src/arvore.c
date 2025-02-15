@@ -323,7 +323,7 @@ int busca(ARQ_BIN* arq_index, int pos_arq, int chave){
 }
 
 void encadeia_livre(ARQ_BIN* arq_index, NO* no, int pos){ 
-    no->n = arq_index->cab.livre;
+    no->prox_livre = arq_index->cab.livre;
     arq_index->cab.livre = pos;
     grava_cabecalho(arq_index);
     grava_bloco(arq_index, no, pos);
@@ -340,24 +340,27 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
     ler_bloco(arq_index, pos_no_vazio, no_vazio);
 
     if(eh_vazio_esquerda){
-        no_pai->chave_dir = no_irmao->chave_esq;
-        no_pai->reg_dir = no_irmao->reg_esq;
-        no_pai->filho_esq = no_vazio->filho_esq;
-        no_pai->filho_meio = no_irmao->filho_esq;
-        no_pai->filho_dir = no_irmao->filho_meio;
-    }else{
-        no_pai->chave_dir = no_pai->chave_esq;
-        no_pai->reg_dir = no_pai->reg_esq;
-        no_pai->chave_esq = no_irmao->chave_esq;
-        no_pai->reg_esq = no_irmao->reg_esq;
-        no_pai->filho_dir = no_vazio->filho_esq;
-        no_pai->filho_meio = no_irmao->filho_meio;
-        no_pai->filho_esq = no_irmao->filho_esq;
-    }
+        no_irmao->chave_dir = no_irmao->chave_esq;
+        no_irmao->reg_dir = no_irmao->reg_esq;
 
-    no_irmao->n = 0;
-    encadeia_livre(arq_index, no_irmao, pos_irmao);
-    grava_bloco(arq_index, no_pai, pos_pai);
+        no_irmao->chave_esq = no_pai->chave_dir;
+        no_irmao->reg_esq = no_pai->reg_dir;
+        
+        no_irmao->filho_dir = no_irmao->filho_meio;
+        no_irmao->filho_meio = no_irmao->filho_esq;
+        no_irmao->filho_esq = no_vazio->filho_esq;
+    }else{
+        no_irmao->chave_dir = no_pai->chave_esq;
+        no_irmao->reg_dir = no_pai->reg_esq;
+        
+        no_irmao->filho_dir = no_vazio->filho_esq;
+    }
+    no_pai->n = 0;
+    encadeia_livre(arq_index, no_pai, pos_pai);
+    grava_bloco(arq_index, no_irmao, pos_irmao);
+    free(no_pai);
+    free(no_irmao);
+    free(no_vazio);
 }
 
 void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazio, int eh_vazio_esquerda){
@@ -407,6 +410,9 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
     grava_bloco(arq_index, no_pai, pos_pai);
     grava_bloco(arq_index, no_irmao, pos_irmao);
     grava_bloco(arq_index, no_irmao, pos_irmao);
+    free(no_pai);
+    free(no_irmao);
+    free(no_vazio);
 }
 
 //cabeçalho de indices gravado e uma posição valida para esse arquvo

@@ -18,6 +18,7 @@ typedef struct no{
     int filho_esq;
     int filho_meio;
     int filho_dir;
+    int prox_livre;
 }NO;
 
 // Estrutura representando livro
