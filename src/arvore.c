@@ -330,7 +330,7 @@ void encadeia_livre(ARQ_BIN* arq_index, NO* no, int pos){
 }
 
 //pré-requisitos: arquivo aberto, pai e irmao com apenas 1 chave
-//pós-requisitos: resultado do merge
+//pós-requisitos: resultado do merge no filho esquerdo do pai, pai e seu filho do meio ficam vazios
 void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int eh_vazio_esquerda){
     NO* no_pai = (NO*)malloc(sizeof(NO));
     NO* no_irmao = (NO*)malloc(sizeof(NO));
@@ -340,24 +340,31 @@ void merge(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_no_vazio, int
     ler_bloco(arq_index, pos_no_vazio, no_vazio);
 
     if(eh_vazio_esquerda){
-        no_irmao->chave_dir = no_irmao->chave_esq;
-        no_irmao->reg_dir = no_irmao->reg_esq;
-
-        no_irmao->chave_esq = no_pai->chave_dir;
-        no_irmao->reg_esq = no_pai->reg_dir;
+        no_vazio->chave_esq = no_pai->chave_esq;
+        no_vazio->reg_esq = no_pai->reg_esq;
         
-        no_irmao->filho_dir = no_irmao->filho_meio;
-        no_irmao->filho_meio = no_irmao->filho_esq;
-        no_irmao->filho_esq = no_vazio->filho_esq;
+        no_vazio->chave_dir = no_irmao->chave_esq;
+        no_vazio->reg_dir = no_irmao->reg_esq;
+
+        no_vazio->filho_meio = no_irmao->filho_esq;
+        no_vazio->filho_dir = no_irmao->filho_dir;
+
+        no_vazio->n = 2;
+
+        no_pai->n = 0;
+        no_irmao->n = 0;
+        grava_bloco(arq_index, no_vazio, pos_no_vazio);
+        encadeia_livre(arq_index, no_pai, pos_pai);
+        encadeia_livre(arq_index, no_irmao, pos_irmao);
     }else{
         no_irmao->chave_dir = no_pai->chave_esq;
         no_irmao->reg_dir = no_pai->reg_esq;
         
         no_irmao->filho_dir = no_vazio->filho_esq;
+        no_irmao->n = 2;
+        grava_bloco(arq_index, no_irmao, pos_irmao);
+        encadeia_livre(arq_index, no_pai, pos_pai);
     }
-    no_pai->n = 0;
-    encadeia_livre(arq_index, no_pai, pos_pai);
-    grava_bloco(arq_index, no_irmao, pos_irmao);
     free(no_pai);
     free(no_irmao);
     free(no_vazio);
@@ -415,37 +422,41 @@ void redistribuicao(ARQ_BIN* arq_index, int pos_pai, int pos_irmao, int pos_vazi
     free(no_vazio);
 }
 
+
+// Remove um livro do arquivo de dados encadeando ele na lista de livres
+// pre-condicao: arquivo aberto e posicao valida no arquivi
+// pos-condicao: livro removido e encadeado na lista de livres
+void remover_livro_arquivo(ARQ_BIN* arq, int pos){
+    LIVRO* l = (LIVRO*)malloc(sizeof(LIVRO));
+
+    l->cod = arq->cab.livre;
+    arq->cab.livre = pos;
+    grava_bloco(arq, l, pos);
+    grava_cabecalho(arq);
+    free(l);
+}
+
 //cabeçalho de indices gravado e uma posição valida para esse arquvo
 //pré-requisitos: Recebe um ponteiro para um arquivo aberto de uma árvoreB que contém ao menos o
 //pós-requisitos: Info será removido da arvoreB
-void removeAux(ARQ_BIN* arq_index, int posArquvio, int info){
-    // if(posArquvio == -1){
-    //     printf("Elemento não encontrado");
-    //     return;
-    // }
-    // NO r;
-    // ler_bloco(arq_index, posArquvio, &r);
-    // int pos;
-    // if(buscaPos(&r,info, &pos)){ // O elemento está no nó
-    //     if(eh_folha(&r)){
-    //         retiraEsquerda(&r, pos);
-    //         r.filhos[0] = -1;
-    //         grava_bloco(arq_index, &r, posArquvio);
-    //         return;
-    //     } else{
-    //         int ptDados;
-    //         r.chaves[pos] = sucessor(arq_index, r.filhos[pos], &ptDados);
-    //         r.registro[pos] = ptDados;
-    //         info = r.chaves[pos];
+void removeAux(ARQ_BIN* arq_index, ARQ_BIN* arq_dados, int pos, int info){
+    // NO* no = (NO*)malloc(sizeof(NO));
+    // ler_bloco(arq_index, pos, no);
+
+    // if(no->chave_esq == info || no->chave_dir == info){
+    //     if(eh_folha(no)){
+    //         if(no->n == 2){
+    //             if(no->chave_esq == info){
+    //                 remover_livro_arquivo(arq_dados, no->reg_esq)
+    //                 no->chave_esq = no->chave_dir;
+    //                 no->reg_esq = no->reg_dir;
+    //             }else{
+    //                 remover_livro_arquivo(arq_dados, no->reg_dir);
+    //             }
+    //             no->n = 1;
+    //         }
     //     }
     // }
-    // removeAux(arq_index, r.filhos[pos], info);
-    // if(underflow(arq_index, r.filhos[pos])){
-    //     if(!empresta(arq_index, &r, pos)){
-    //         merge(arq_index, &r, pos);
-    //     }
-    // }
-    // grava_bloco(arq_index, &r, posArquvio);
 }
 
 
@@ -453,22 +464,9 @@ void removeAux(ARQ_BIN* arq_index, int posArquvio, int info){
 //cabeçalho de indices gravado
 //pós-requisitos: Info será removido da arvoreB
 void remover(ARQ_BIN* arq_index, int info){
-    // if(arq_index->cab.raiz == -1){
-    //     printf("Arvore Vazia!\n");
-    //     return;
-    // }
-    // //verificar
-    // removeAux(arq_index, arq_index->cab.raiz, info);
-    // NO r;
-    // ler_bloco(arq_index, arq_index->cab.raiz, &r);
-    // if(r.numChaves == 0){
-    //     int aux = r.filhos[0];
-    //     r.filhos[0] = arq_index->cab.livre;
-    //     grava_bloco(arq_index, &r, arq_index->cab.raiz);
-    //     arq_index->cab.livre = arq_index->cab.raiz;
-    //     arq_index->cab.raiz = aux;
-    // }
-    // grava_cabecalho(arq_index);
+    if(arq_index->cab.raiz == -1){
+        printf("Sem livros cadastrados\n");
+    }
 }
 
 #endif
